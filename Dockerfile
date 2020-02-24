@@ -1,4 +1,4 @@
-FROM tezign.com:5000/centos7-python3.7:latest
+FROM sunnywalden/centos7-python3.7:latest
 
 MAINTAINER sunnywalden@gmail.com
 
@@ -10,7 +10,8 @@ ENV SONAR_URL=$SONAR_URL \
 
 RUN curl https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.2.0.1873-linux.zip -O /opt/sonar-scanner-cli-4.2.0.1873-linux.zip && \
     unzip /opt/sonar-scanner-cli-4.2.0.1873-linux.zip && \
-    export PATH=/opt/sonar-scanner-cli-4.2.0.1873-linux/bin:$PATH
+    export PATH=/opt/sonar-scanner-cli-4.2.0.1873-linux/bin:$PATH && \
+    rm -rf /opt/sonar-scanner-cli-4.2.0.1873-linux.zip
 
 MAINTAINER sonar-scanner \
       -Dsonar.projectKey=$SONAR_PRO \
