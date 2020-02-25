@@ -4,16 +4,25 @@ MAINTAINER sunnywalden@gmail.com
 
 USER root
 
-ENV SONAR_URL=$SONAR_URL \
-    SONAR_PRO=$SONAR_PRO \
-    SONAR_TOKEN=$SONAR_TOKEN
+ENV sonar_version=4.2.0.1873
 
-RUN curl https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.2.0.1873-linux.zip -O /opt/sonar-scanner-cli-4.2.0.1873-linux.zip && \
-    unzip /opt/sonar-scanner-cli-4.2.0.1873-linux.zip && \
-    export PATH=/opt/sonar-scanner-cli-4.2.0.1873-linux/bin:$PATH && \
-    rm -rf /opt/sonar-scanner-cli-4.2.0.1873-linux.zip
+COPY tmp/sonar-scanner-cli-${sonar_version}-linux.zip /opt/
 
-MAINTAINER sonar-scanner \
+WORKDIR /opt/
+
+ENV sonar_download_url=https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${sonar_version}-linux.zip \
+    sonar_file_path=/tmp/sonar-scanner-cli-${sonar_version}-linux.zip \
+    SONAR_URL=${SONAR_URL} \
+    SONAR_PRO=${SONAR_PRO} \
+    SONAR_TOKEN=${SONAR_TOKEN}
+
+RUN yum -y install unzip && \
+    ls -la sonar-scanner* && \
+    unzip sonar-scanner-cli-${sonar_version}-linux.zip && \
+    export PATH=/opt/sonar-scanner-cli-${sonar_version}-linux/bin:$PATH && \
+    rm -rf sonar-scanner-cli-${sonar_version}-linux.zip
+
+ENTRYPOINT sonar-scanner \
       -Dsonar.projectKey=$SONAR_PRO \
       -Dsonar.sources=. \
       -Dsonar.host.url=$SONAR_URL \
